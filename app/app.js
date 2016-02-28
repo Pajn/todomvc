@@ -10,8 +10,11 @@ angular.module('todomvc', ['ngRoute', 'ngResource'])
 		'use strict';
 
 		var routeConfig = {
-			controller: 'TodoListCtrl',
-			templateUrl: '/app/components/todo-list/view.html',
+			template: '<todo-list store="store" />',
+			controller: function (store, $scope) {
+				console.log(store)
+				$scope.store = store;
+			},
 			resolve: {
 				store: function (todoStorage) {
 					// Get the correct module (API or localStorage).

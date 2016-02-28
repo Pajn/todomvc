@@ -6,64 +6,90 @@
  * - exposes the model to the template and provides event handlers
  */
 angular.module('todomvc')
-	.controller('TodoCtrl', function TodoCtrl($scope) {
-		'use strict';
+  .directive('todo', () => ({
+    templateUrl: '/app/components/todo/view.html',
+    // Only allow the directuve to be used as a HTML Element
+    restrict: 'E',
+    scope: {
+      // Specify attributes where parents can pass and receive data here
+      // Syntax name: 'FLAG'
+      // FLAGS:
+      // = Two way data binding
+      // @ One way incoming expression (like placeholder)
+      // & One way outgoing behaviour (like ng-click)
+      todo: '=',
+      store: '=',
+    },
+    bindToController: true,
+    controller: TodoCtrl,
+    controllerAs: 'ctrl',
+  }));
 
-		$scope.newTodo = '';
-		$scope.editedTodo = null;
+function TodoCtrl() {
+	'use strict';
 
-		$scope.editTodo = function () {
-			$scope.editedTodo = $scope.todo;
-			// Clone the original todo to restore it on demand.
-			$scope.originalTodo = angular.extend({}, $scope.todo);
-		};
+	this.newTodo = '';
+	this.editedTodo = null;
 
-		$scope.saveEdits = function (event) {
-      var todo = $scope.todo;
+	this.editTodo = function () {
+		this.editedTodo = this.todo;
+		// Clone the original todo to restore it on demand.
+		this.originalTodo = angular.extend({}, this.todo);
+	};
 
-			// Blur events are automatically triggered after the form submit event.
-			// This does some unfortunate logic handling to prevent saving twice.
-			if (event === 'blur' && $scope.saveEvent === 'submit') {
-				$scope.saveEvent = null;
-				return;
-			}
+	this.saveEdits = function (event) {
+    var todo = this.todo;
 
-			$scope.saveEvent = event;
+		// Blur events are automatically triggered after the form submit event.
+		// This does some unfortunate logic handling to prevent saving twice.
+		if (event === 'blur' && this.saveEvent === 'submit') {
+			this.saveEvent = null;
+			return;
+		}
 
-			if ($scope.reverted) {
-				// Todo edits were reverted-- don't save.
-				$scope.reverted = null;
-				return;
-			}
+		this.saveEvent = event;
 
-			todo.title = todo.title.trim();
+		if (this.reverted) {
+			// Todo edits were reverted-- don't save.
+			this.reverted = null;
+			return;
+		}
 
-			if (todo.title === $scope.originalTodo.title) {
-				$scope.editedTodo = null;
-				return;
-			}
+		todo.title = todo.title.trim();
 
-			$scope.store[todo.title ? 'put' : 'delete'](todo)
-				.then(function success() {}, function error() {
-					todo.title = $scope.originalTodo.title;
-				})
-				.finally(function () {
-					$scope.editedTodo = null;
-				});
-		};
+		if (todo.title === this.originalTodo.title) {
+			this.editedTodo = null;
+			return;
+		}
 
-		$scope.revertEdits = function () {
-			todos[todos.indexOf(todo)] = $scope.originalTodo;
-			$scope.editedTodo = null;
-			$scope.originalTodo = null;
-			$scope.reverted = true;
-		};
+		this.store[todo.title ? 'put' : 'delete'](todo)
+			.then(function success() {}, function error() {
+				todo.title = this.originalTodo.title;
+			})
+			.finally(function () {
+				this.editedTodo = null;
+			});
+	};
 
-		$scope.removeTodo = function () {
-			$scope.store.delete($scope.todo);
-		};
+	this.revertEdits = function () {
+		todos[todos.indexOf(todo)] = this.originalTodo;
+		this.editedTodo = null;
+		this.originalTodo = null;
+		this.reverted = true;
+	};
 
-		$scope.saveTodo = function () {
-			$scope.store.put($scope.todo);
-		};
-	});
+	this.removeTodo = function () {
+		this.store.delete(this.todo);
+	};
+
+	this.saveTodo = function () {
+		this.store.put(this.todo);
+	};
+
+	this.toggleThisTodoCompleted = function (completed) {
+		if (angular.isDefined(completed)) {
+			this.todo.completed = completed;
+		}
+    this.toggleCompleted(todo)
+	};
+}
