@@ -93,6 +93,7 @@ angular.module('todomvc')
 		var STORAGE_ID = 'todos-angularjs';
 
 		var store = {
+			nextId: 1,
 			todos: [],
 
 			_getFromLocalStorage: function () {
@@ -141,6 +142,8 @@ angular.module('todomvc')
 			insert: function (todo) {
 				var deferred = $q.defer();
 
+				todo.id = store.nextId;
+				store.nextId += 1;
 				store.todos.push(todo);
 
 				store._saveToLocalStorage(store.todos);
@@ -149,8 +152,11 @@ angular.module('todomvc')
 				return deferred.promise;
 			},
 
-			put: function (todo, index) {
+			put: function (todo) {
 				var deferred = $q.defer();
+				var index = store.todos.findIndex(function (t) {
+					return t === todo;
+				})
 
 				store.todos[index] = todo;
 

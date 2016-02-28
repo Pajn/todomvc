@@ -12,7 +12,6 @@ angular.module('todomvc', ['ngRoute', 'ngResource'])
 		var routeConfig = {
 			template: '<todo-list store="store" />',
 			controller: function (store, $scope) {
-				console.log(store)
 				$scope.store = store;
 			},
 			resolve: {
