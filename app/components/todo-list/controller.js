@@ -1,10 +1,81 @@
 /*global angular */
+'use strict'
 
 /**
  * The main controller for the app. The controller:
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
+
+class TodoListCtrl {
+
+  constructor($routeParams, $filter, $scope) {
+    const cleanup = $scope.$watch('ctrl.store', () => {
+      this.todos = this.store.todos;
+      // We only need to know when the ctrl.store is first set, so clean up the watcher as soon
+      // as possible.
+      cleanup();
+    });
+
+    $scope.$watch('ctrl.todos', () => {
+      this.remainingCount = $filter('filter')(this.todos, { completed: false }).length;
+      this.completedCount = this.todos.length - this.remainingCount;
+      this.allChecked = !this.remainingCount;
+    }, true);
+
+    this.status = $routeParams.status || '';
+
+    this.statusFilter = (this.status === 'active') ?
+      { completed: false } : (this.status === 'completed') ?
+      { completed: true } : {};
+  }
+
+	addTodo() {
+		const newTodo = {
+			title: this.newTodo.trim(),
+			completed: false
+		};
+
+		if (!newTodo.title) {
+			return;
+		}
+
+		this.saving = true;
+		this.store.insert(newTodo)
+			.then(() => {
+        // As we use an arrow function we can safely use this in here.
+				this.newTodo = '';
+			})
+			.finally(() => {
+				this.saving = false;
+			});
+	}
+
+	toggleCompleted(todo, completed) {
+		if (angular.isDefined(completed)) {
+			todo.completed = completed;
+		}
+
+		this.store.put(todo)
+			.catch(() => {
+				todo.completed = !todo.completed;
+			});
+	}
+
+	clearCompletedTodos() {
+		this.store.clearCompleted();
+	}
+
+	markAll(completed) {
+		this.todos.forEach(todo => {
+			if (todo.completed !== completed) {
+				this.toggleCompleted(todo, completed);
+			}
+		});
+	}
+}
+
+// Since classes are blocked scoped we need reference it after it has been declared.
 angular.module('todomvc')
   .component('todoList', {
     templateUrl: '/app/components/todo-list/view.html',
@@ -15,67 +86,3 @@ angular.module('todomvc')
     controller: TodoListCtrl,
     controllerAs: 'ctrl',
   });
-
-function TodoListCtrl($routeParams, $filter, $scope) {
-	'use strict';
-
-  var ctrl = this;
-
-	var todos = ctrl.todos = ctrl.store.todos;
-
-	$scope.$watch('ctrl.todos', function () {
-		ctrl.remainingCount = $filter('filter')(todos, { completed: false }).length;
-		ctrl.completedCount = todos.length - ctrl.remainingCount;
-		ctrl.allChecked = !ctrl.remainingCount;
-	}, true);
-
-	// As we now have a parent controller in the router, we don't need to wait for it to be finished
-	// anymore
-  var status = ctrl.status = $routeParams.status || '';
-  ctrl.statusFilter = (ctrl.status === 'active') ?
-    { completed: false } : (ctrl.status === 'completed') ?
-    { completed: true } : {};
-
-	ctrl.addTodo = function () {
-		var newTodo = {
-			title: ctrl.newTodo.trim(),
-			completed: false
-		};
-
-		if (!newTodo.title) {
-			return;
-		}
-
-		ctrl.saving = true;
-		ctrl.store.insert(newTodo)
-			.then(function success() {
-				ctrl.newTodo = '';
-			})
-			.finally(function () {
-				ctrl.saving = false;
-			});
-	};
-
-	ctrl.toggleCompleted = function (todo, completed) {
-		if (angular.isDefined(completed)) {
-			todo.completed = completed;
-		}
-
-		ctrl.store.put(todo)
-			.then(function success() {}, function error() {
-				todo.completed = !todo.completed;
-			});
-	};
-
-	ctrl.clearCompletedTodos = function () {
-		ctrl.store.clearCompleted();
-	};
-
-	ctrl.markAll = function (completed) {
-		todos.forEach(function (todo) {
-			if (todo.completed !== completed) {
-				ctrl.toggleCompleted(todo, completed);
-			}
-		});
-	};
-}

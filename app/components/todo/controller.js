@@ -1,10 +1,82 @@
 /*global angular */
-
+'use strict';
 /**
  * A simple controller for just a single todo. The controller:
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
+
+class TodoCtrl {
+
+  constructor() {
+  	this.newTodo = '';
+  	this.editedTodo = null;
+  }
+
+	editTodo() {
+		this.editedTodo = this.todo;
+		// Clone the original todo to restore it on demand.
+		this.originalTodo = angular.extend({}, this.todo);
+	}
+
+	saveEdits(event) {
+    const todo = this.todo;
+
+		// Blur events are automatically triggered after the form submit event.
+		// This does some unfortunate logic handling to prevent saving twice.
+		if (event === 'blur' && this.saveEvent === 'submit') {
+			this.saveEvent = null;
+			return;
+		}
+
+		this.saveEvent = event;
+
+		if (this.reverted) {
+			// Todo edits were reverted-- don't save.
+			this.reverted = null;
+			return;
+		}
+
+		todo.title = todo.title.trim();
+
+		if (todo.title === this.originalTodo.title) {
+			this.editedTodo = null;
+			return;
+		}
+
+		this.store[todo.title ? 'put' : 'delete'](todo)
+			.catch(() => {
+				todo.title = this.originalTodo.title;
+			})
+			.finally(() => {
+				this.editedTodo = null;
+			});
+	}
+
+	revertEdits() {
+		this.todo = this.originalTodo;
+		this.editedTodo = null;
+		this.originalTodo = null;
+		this.reverted = true;
+	};
+
+	removeTodo() {
+		this.store.delete(this.todo);
+	}
+
+	saveTodo() {
+		this.store.put(this.todo);
+	}
+
+	toggleCompleted(completed) {
+		this.store.put(this.todo)
+			.catch(() => {
+				this.todo.completed = !this.todo.completed;
+			});
+	}
+}
+
+// Since classes are blocked scoped we need reference it after it has been declared.
 angular.module('todomvc')
   .component('todo', {
     templateUrl: '/app/components/todo/view.html',
@@ -16,74 +88,3 @@ angular.module('todomvc')
     controller: TodoCtrl,
     controllerAs: 'ctrl',
   });
-
-function TodoCtrl() {
-	'use strict';
-
-  var ctrl = this;
-
-	ctrl.newTodo = '';
-	ctrl.editedTodo = null;
-
-	ctrl.editTodo = function () {
-		ctrl.editedTodo = ctrl.todo;
-		// Clone the original todo to restore it on demand.
-		ctrl.originalTodo = angular.extend({}, ctrl.todo);
-	};
-
-	ctrl.saveEdits = function (event) {
-    var todo = ctrl.todo;
-
-		// Blur events are automatically triggered after the form submit event.
-		// This does some unfortunate logic handling to prevent saving twice.
-		if (event === 'blur' && ctrl.saveEvent === 'submit') {
-			ctrl.saveEvent = null;
-			return;
-		}
-
-		ctrl.saveEvent = event;
-
-		if (ctrl.reverted) {
-			// Todo edits were reverted-- don't save.
-			ctrl.reverted = null;
-			return;
-		}
-
-		todo.title = todo.title.trim();
-
-		if (todo.title === ctrl.originalTodo.title) {
-			ctrl.editedTodo = null;
-			return;
-		}
-
-		ctrl.store[todo.title ? 'put' : 'delete'](todo)
-			.then(function success() {}, function error() {
-				todo.title = ctrl.originalTodo.title;
-			})
-			.finally(function () {
-				ctrl.editedTodo = null;
-			});
-	};
-
-	ctrl.revertEdits = function () {
-		todos[todos.indexOf(todo)] = ctrl.originalTodo;
-		ctrl.editedTodo = null;
-		ctrl.originalTodo = null;
-		ctrl.reverted = true;
-	};
-
-	ctrl.removeTodo = function () {
-		ctrl.store.delete(ctrl.todo);
-	};
-
-	ctrl.saveTodo = function () {
-		ctrl.store.put(ctrl.todo);
-	};
-
-	ctrl.toggleCompleted = function (completed) {
-		ctrl.store.put(ctrl.todo)
-			.then(function success() {}, function error() {
-				ctrl.todo.completed = !ctrl.todo.completed;
-			});
-	};
-}

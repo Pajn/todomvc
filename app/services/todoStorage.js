@@ -8,23 +8,23 @@
  * model.
  */
 angular.module('todomvc')
-	.factory('todoStorage', function ($http, $injector) {
+	.factory('todoStorage', ($http, $injector) => {
 		'use strict';
 
 		// Detect if an API backend is present. If so, return the API module, else
 		// hand off the localStorage adapter
 		return $http.get('/api')
-			.then(function () {
+			.then(() => {
 				return $injector.get('api');
-			}, function () {
+			}, () => {
 				return $injector.get('localStorage');
 			});
 	})
 
-	.factory('api', function ($resource) {
+	.factory('api', $resource => {
 		'use strict';
 
-		var store = {
+		const store = {
 			todos: [],
 
 			api: $resource('/api/todos/:id', null,
@@ -33,23 +33,21 @@ angular.module('todomvc')
 				}
 			),
 
-			clearCompleted: function () {
-				var originalTodos = store.todos.slice(0);
+			clearCompleted() {
+				const originalTodos = store.todos.slice(0);
 
-				var incompleteTodos = store.todos.filter(function (todo) {
-					return !todo.completed;
-				});
+				const incompleteTodos = store.todos.filter(todo => !todo.completed);
 
 				angular.copy(incompleteTodos, store.todos);
 
-				return store.api.delete(function () {
-					}, function error() {
+				return store.api.delete(() => {
+        }, () => {
 						angular.copy(originalTodos, store.todos);
 					});
 			},
 
-			delete: function (todo) {
-				var originalTodos = store.todos.slice(0);
+			delete(todo) {
+				const originalTodos = store.todos.slice(0);
 
 				store.todos.splice(store.todos.indexOf(todo), 1);
 				return store.api.delete({ id: todo.id },
@@ -59,26 +57,26 @@ angular.module('todomvc')
 					});
 			},
 
-			get: function () {
-				return store.api.query(function (resp) {
+			get() {
+				return store.api.query(resp => {
 					angular.copy(resp, store.todos);
 				});
 			},
 
-			insert: function (todo) {
-				var originalTodos = store.todos.slice(0);
+			insert(todo) {
+				const originalTodos = store.todos.slice(0);
 
 				return store.api.save(todo,
-					function success(resp) {
+					(resp) => {
 						todo.id = resp.id;
 						store.todos.push(todo);
-					}, function error() {
+					}, () => {
 						angular.copy(originalTodos, store.todos);
 					})
 					.$promise;
 			},
 
-			put: function (todo) {
+			put(todo) {
 				return store.api.update({ id: todo.id }, todo)
 					.$promise;
 			}
@@ -87,29 +85,27 @@ angular.module('todomvc')
 		return store;
 	})
 
-	.factory('localStorage', function ($q) {
+	.factory('localStorage', $q => {
 		'use strict';
 
-		var STORAGE_ID = 'todos-angularjs';
+		const STORAGE_ID = 'todos-angularjs';
 
-		var store = {
+		const store = {
 			nextId: 1,
 			todos: [],
 
-			_getFromLocalStorage: function () {
+			_getFromLocalStorage() {
 				return JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
 			},
 
-			_saveToLocalStorage: function (todos) {
+			_saveToLocalStorage(todos) {
 				localStorage.setItem(STORAGE_ID, JSON.stringify(todos));
 			},
 
-			clearCompleted: function () {
-				var deferred = $q.defer();
+			clearCompleted() {
+				const deferred = $q.defer();
 
-				var incompleteTodos = store.todos.filter(function (todo) {
-					return !todo.completed;
-				});
+				const incompleteTodos = store.todos.filter(todo => !todo.completed);
 
 				angular.copy(incompleteTodos, store.todos);
 
@@ -119,8 +115,8 @@ angular.module('todomvc')
 				return deferred.promise;
 			},
 
-			delete: function (todo) {
-				var deferred = $q.defer();
+			delete(todo) {
+				const deferred = $q.defer();
 
 				store.todos.splice(store.todos.indexOf(todo), 1);
 
@@ -130,8 +126,8 @@ angular.module('todomvc')
 				return deferred.promise;
 			},
 
-			get: function () {
-				var deferred = $q.defer();
+			get() {
+				const deferred = $q.defer();
 
 				angular.copy(store._getFromLocalStorage(), store.todos);
 				deferred.resolve(store.todos);
@@ -139,8 +135,8 @@ angular.module('todomvc')
 				return deferred.promise;
 			},
 
-			insert: function (todo) {
-				var deferred = $q.defer();
+			insert(todo) {
+				const deferred = $q.defer();
 
 				todo.id = store.nextId;
 				store.nextId += 1;
@@ -152,11 +148,9 @@ angular.module('todomvc')
 				return deferred.promise;
 			},
 
-			put: function (todo) {
-				var deferred = $q.defer();
-				var index = store.todos.findIndex(function (t) {
-					return t === todo;
-				})
+			put(todo) {
+				const deferred = $q.defer();
+				const index = store.todos.findIndex(t => t === todo);
 
 				store.todos[index] = todo;
 
