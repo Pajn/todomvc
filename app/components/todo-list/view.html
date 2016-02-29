@@ -9,9 +9,8 @@
     <input id="toggle-all" type="checkbox" ng-model="ctrl.allChecked" ng-click="ctrl.markAll(ctrl.allChecked)">
     <label for="toggle-all">Mark all as complete</label>
     <ul id="todo-list">
-      <li ng-repeat="todo in ctrl.todos | filter:ctrl.statusFilter track by $index"
-          ng-class="{completed: todo.completed, editing: todo == false}">
-          <todo todo="todo" store="ctrl.store" />
+      <li ng-repeat="todo in ctrl.todos | filter:ctrl.statusFilter track by $index">
+        <todo todo="todo" store="ctrl.store" />
       </li>
     </ul>
   </section>

@@ -8,8 +8,10 @@
 		<style>[ng-cloak] { display: none; }</style>
 	</head>
 	<body ng-app="todomvc">
-		<ng-view />
-		<ng-include src="'/app/components/footer/view.html'" />
+    <div>
+  		<ng-view />
+    </div>
+    <ng-include src="'/app/components/footer/view.html'" />
 
 		<script src="node_modules/todomvc-common/base.js"></script>
 		<script src="node_modules/angular/angular.js"></script>

@@ -1,9 +1,11 @@
-<div class="view">
-  <input class="toggle" type="checkbox" ng-model="ctrl.todo.completed" ng-change="ctrl.toggleCompleted()">
-  <label ng-dblclick="ctrl.editTodo()">{{ctrl.todo.title}}</label>
-  <button class="destroy" ng-click="ctrl.removeTodo()"></button>
-</div>
-<form ng-submit="ctrl.saveEdits('submit')">
-  <input class="edit" ng-trim="false" ng-model="ctrl.todo.title" todo-escape="ctrl.revertEdits()"
-         ng-blur="ctrl.saveEdits('blur')" todo-focus="ctrl.todo == ctrl.editedTodo">
-</form>
+<li ng-class="{completed: ctrl.todo.completed, editing: ctrl.todo == ctrl.editedTodo}">
+  <div class="view">
+    <input class="toggle" type="checkbox" ng-model="ctrl.todo.completed" ng-change="ctrl.toggleCompleted()">
+    <label ng-dblclick="ctrl.editTodo()">{{ctrl.todo.title}}</label>
+    <button class="destroy" ng-click="ctrl.removeTodo()"></button>
+  </div>
+  <form ng-submit="ctrl.saveEdits('submit')">
+    <input class="edit" ng-trim="false" ng-model="ctrl.todo.title" todo-escape="ctrl.revertEdits()"
+           ng-blur="ctrl.saveEdits('blur')" todo-focus="ctrl.todo == ctrl.editedTodo">
+  </form>
+</li>
