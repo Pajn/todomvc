@@ -6,20 +6,15 @@
  * - exposes the model to the template and provides event handlers
  */
 angular.module('todomvc')
-  .directive('todo', function (){
-    return {
-      templateUrl: '/app/components/todo/view.html',
-      // Only allow the directuve to be used as a HTML Element
-      restrict: 'E',
-      scope: {
-        // Allow store, editedTodo and todo to be passed as an argument using two-way binding
-        todo: '=',
-        store: '=',
-      },
-      bindToController: true,
-      controller: TodoCtrl,
-      controllerAs: 'ctrl',
-    }
+  .component('todo', {
+    templateUrl: '/app/components/todo/view.html',
+    bindings: {
+      // Allow store, editedTodo and todo to be passed as an argument using two-way binding
+      todo: '=',
+      store: '=',
+    },
+    controller: TodoCtrl,
+    controllerAs: 'ctrl',
   });
 
 function TodoCtrl() {
