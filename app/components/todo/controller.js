@@ -53,7 +53,7 @@ angular.module('todomvc')
 		};
 
 		$scope.revertEdits = function () {
-			todos[todos.indexOf(todo)] = $scope.originalTodo;
+			$scope.todo = $scope.originalTodo;
 			$scope.editedTodo = null;
 			$scope.originalTodo = null;
 			$scope.reverted = true;
