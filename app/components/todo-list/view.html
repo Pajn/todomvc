@@ -10,7 +10,7 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul id="todo-list">
       <li ng-repeat="todo in ctrl.todos | filter:ctrl.statusFilter track by $index">
-        <todo todo="todo" store="ctrl.store" />
+        <todo-item todo="todo" store="ctrl.store" />
       </li>
     </ul>
   </section>

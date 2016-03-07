@@ -6,9 +6,9 @@
  * - exposes the model to the template and provides event handlers
  */
 angular.module('todomvc')
-  .directive('todo', function (){
+  .directive('todoItem', function (){
     return {
-      templateUrl: '/app/components/todo/view.html',
+      templateUrl: '/app/components/todo-item/view.html',
       // Only allow the directuve to be used as a HTML Element
       restrict: 'E',
       scope: {
