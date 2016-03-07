@@ -6,8 +6,8 @@
  * - exposes the model to the template and provides event handlers
  */
 angular.module('todomvc')
-  .component('todo', {
-    templateUrl: '/app/components/todo/view.html',
+  .component('todoItem', {
+    templateUrl: '/app/components/todo-item/view.html',
     bindings: {
       // Allow store, editedTodo and todo to be passed as an argument using two-way binding
       todo: '=',
