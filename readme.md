@@ -3,12 +3,12 @@ Vi har valt att refaktorera Todomvc steg för steg från en mer klassisk MVC str
 Att använda komponenter börjar bli väldigt populärt i JavaScript världen, t.ex. är Angular 2, React och Polymer helt komponent-baserade.
 
 I [MVC branchen](https://github.com/Pajn/todomvc/tree/MVC) är de olika delarna uppdelade i vad de är, toppnivån består av controllers, directives, services och views. Det är en väldigt vanlig struktur i Angular och är inspirerad av serversideramverk som Rails. Ett beroendediagram över applikationen skulle se ut något såhär:
-![](./mvc.svg)
+![](https://cdn.rawgit.com/Pajn/todomvc/master/mvc.svg)
 
 I [component-structure branchen](https://github.com/Pajn/todomvc/tree/component-structure) är filerna uppdelade i vad de gör istället för vad de är för något. Ska vi hitta kontrollern för todo-list går vi först till todo-list och sen till controller istället för tvärt om. Många tycker att den här typen av uppdelning känns mer naturlig, då det är närmare hur man tänker på olika delar i en applikation. Dessutom är saker som ofta ändras tillsammans grupperade vilket gör det enklare att hitta och veta att allt som är relaterat till ändringen har blivit ändrat.
 Notera dock att servicen som hanterar datan är placerad utanför komponenten. Att domänlogiken ska vara separerad från vyn följer Single Responsability Principle från SOLID vilket är viktigt då de ändras av helt olika anledningar, om kunden t.ex. ber oss ändra ordningen på två fällt i ett faktureringsystem ska inte totalsumman på fakturan ändras samtidigt.
 Det gör att det nya beroendediagramet ser som nedan. Vi har fortfarande samma beroende mellan de olika klasserna, men den logiska grupperingen av klasserna är ändrad.
-![](./components.svg)
+![](https://cdn.rawgit.com/Pajn/todomvc/master/components.svg)
 
 I [directives branchen](https://github.com/Pajn/todomvc/tree/directives) så behåller vi samma struktur som ovan, men använder inte längre Angulars `ng-controller` och `ng-template` utan varje komponent är ett eget direktiv, vilket ger flera fördelar. Den som använder vår komponent skriver nu
 ```xml
