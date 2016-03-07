@@ -16,8 +16,8 @@ I [directives branchen](https://github.com/Pajn/todomvc/tree/directives) så beh
 ```
 istället för
 ```xml
-<div	ng-controller="TodoCtrl"
-ng-include="'/app/components/todo-item/view.html'">
+<div ng-controller="TodoCtrl"
+     ng-include="'/app/components/todo-item/view.html'">
 </div>
 ```
 vilket dels är lättare att skriva och kräver mindre insyn i hur komponenten fungerar, om komponenten har en vy och/eller kontroller är upp till komponenten, inte användaren av den. 
