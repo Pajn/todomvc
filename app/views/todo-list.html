@@ -11,7 +11,7 @@
     <ul id="todo-list">
       <li ng-repeat="todo in todos | filter:statusFilter track by $index"
           ng-class="{completed: todo.completed, editing: todo == editedTodo}"
-          ng-include="'/app/views/todo.html'">
+          ng-include="'/app/views/todo-item.html'">
       </li>
     </ul>
   </section>
