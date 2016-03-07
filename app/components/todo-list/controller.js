@@ -30,49 +30,49 @@ class TodoListCtrl {
       { completed: true } : {};
   }
 
-	addTodo() {
-		const newTodo = {
-			title: this.newTodo.trim(),
-			completed: false
-		};
+  addTodo() {
+    const newTodo = {
+      title: this.newTodo.trim(),
+      completed: false
+    };
 
-		if (!newTodo.title) {
-			return;
-		}
+    if (!newTodo.title) {
+      return;
+    }
 
-		this.saving = true;
-		this.store.insert(newTodo)
-			.then(() => {
+    this.saving = true;
+    this.store.insert(newTodo)
+      .then(() => {
         // As we use an arrow function we can safely use this in here.
-				this.newTodo = '';
-			})
-			.finally(() => {
-				this.saving = false;
-			});
-	}
+        this.newTodo = '';
+      })
+      .finally(() => {
+        this.saving = false;
+      });
+  }
 
-	toggleCompleted(todo, completed) {
-		if (angular.isDefined(completed)) {
-			todo.completed = completed;
-		}
+  toggleCompleted(todo, completed) {
+    if (angular.isDefined(completed)) {
+      todo.completed = completed;
+    }
 
-		this.store.put(todo)
-			.catch(() => {
-				todo.completed = !todo.completed;
-			});
-	}
+    this.store.put(todo)
+      .catch(() => {
+        todo.completed = !todo.completed;
+      });
+  }
 
-	clearCompletedTodos() {
-		this.store.clearCompleted();
-	}
+  clearCompletedTodos() {
+    this.store.clearCompleted();
+  }
 
-	markAll(completed) {
-		this.todos.forEach(todo => {
-			if (todo.completed !== completed) {
-				this.toggleCompleted(todo, completed);
-			}
-		});
-	}
+  markAll(completed) {
+    this.todos.forEach(todo => {
+      if (todo.completed !== completed) {
+        this.toggleCompleted(todo, completed);
+      }
+    });
+  }
 }
 
 // Since classes are blocked scoped we need reference it after it has been declared.
